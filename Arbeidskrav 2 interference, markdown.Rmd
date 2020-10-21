@@ -1,0 +1,163 @@
+---
+title: "Arbeidskrav 2, interference"
+author: "Ingvild Kåshagen"
+date: "20 10 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+## Hypotese
+# Install packages
+```{r}
+library(readxl)
+library (tidyverse)
+library(readr)
+library (ggplot2)
+```
+
+# Download data set
+
+```{r}
+download.file(url = "https://ndownloader.figstatic.com/files/14702420", destfile = "hypertrophy.csv")
+```
+## View data set and make data variable
+
+```{r}
+hypertrophy1 <- read_csv("hypertrophy.csv")
+```
+
+
+## Lage data sett og velge ut variabler. 
+```{r}
+hyp1 <- hypertrophy1 %>%
+  select(SUB_ID, CLUSTER, T3T1_PERCENT_CHANGE_RNA) %>%
+  print()
+```
+## Two sided T test. 
+A one sample t-test can be used to test is a mean differs from a nulll hypothesis. Above we state a directional question “if training increases RNA content”. If we want to keep this direction in the statistical hypothesis we want to use a one sample, one-tailed t-test with a directional alternative hypothesis alternative = "greater".
+
+We could also be open to the hypothesis that RNA content can be lower or higher than 0. This would imply a two-tailed test, only testing difference (alternative = "two.sided").
+
+Since the variable of interest is calculated as a change (in percentage) the null hypothesis of no change equals 0 in percentage change.
+```{r}
+t.test(hyp1$T3T1_PERCENT_CHANGE_RNA, mu = 0, alternative = "two.sided")
+```
+## Calculation of difference in RNA increase between T1 and T3, between the HIGH and LOW cluster group.
+
+## The same test perfomed using the raw data. Using the raw variables to test in RNA changes with training. The variables of interest are:
+
+
+```{r}
+hyp2 <- hypertrophy1 %>%
+  select(SUB_ID, CLUSTER, T1_RNA, T3_RNA) %>%
+  print()
+```
+# The data are paired, meaning that we now have two data points from each participant. In the t-test function we need to specify paired = TRUE in this case. The null hypothesis can still be directional or “two.sided”.
+
+```{r}
+t.test(hyp2$T3_RNA, hyp2$T1_RNA, paired = TRUE, alternative = "two.sided")
+
+```
+
+
+## Using change score, not converting to percentages to compare groups. Removing participants that does not belong to either of groups.
+
+```{r}
+hyp3 <- hypertrophy1 %>%
+  select(SUB_ID, CLUSTER, T3T1__RNA) %>%
+  filter(!is.na(CLUSTER)) %>%
+  print()
+```
+## The t-test can now be used with a formula. We want to explain the variable T3T1__RNA with the grouping variable (CLUSTER). In R we can write this as a formula T3T1__RNA  ~ CLUSTER. In the help-pages of t.testwe can see that a method exists for class formula. This means that the function can be used differently than what we have previously done. Notice also that the data argument is needed since we do not enter the data directly.
+
+```{r}
+t.test(T3T1__RNA  ~ CLUSTER, data = hyp3)
+```
+
+The mean increase in the LOW group is slightly higher than in the HIGH group, however the results are not so different than what would be expected in the null hypothesis was true. We do not have strong evidence against the null
+
+## boxplot of results
+
+```{r}
+hyp3 %>%
+  ggplot(aes(CLUSTER, T3T1__RNA)) + geom_boxplot()
+```
+## T- test value
+```{r}
+ttest <- t.test(hyp2$T3_RNA, hyp2$T1_RNA, paired = TRUE, alternative = "two.sided")
+```
+
+
+## T-test statistics
+```{r}
+ttest$statistic
+
+```
+
+## Mean difference 
+```{r}
+ttest$estimate
+
+```
+
+## Confidence interval
+```{r}
+ttest$conf.int
+
+```
+
+# The confidence interval is two numbers the upper and the lower value
+# to get only the lower
+
+```{r}
+ttest$conf.int[1]
+
+```
+
+# And the upper
+```{r}
+ttest$conf.int[2]
+
+```
+
+# P-value
+```{r}
+ttest$p.value
+
+```
+
+# Degrees of freedom
+```{r}
+df <- ttest$parameter
+
+```
+# The test statistics
+```{r}
+statistic <- ttest$statistic
+```
+
+# Mean difference
+```{r}
+estimate <- ttest$estimate
+
+```
+# Confidence interval
+```{r}
+ci <- ttest$conf.int
+
+```
+#P-value
+
+```{r}
+pval <- ttest$p.value
+
+```
+
+
+
+
