@@ -1,0 +1,91 @@
+---
+title: "Arbeidskrav 2, interference"
+author: "Ingvild Kåshagen"
+date: "20 10 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+### Innledning og hypotese:
+I denne oppgaven skal vi se på hvorvidt en treningsintervensjon påvirker totalt RNA innhold i muskelen, og om denne påvirkningen er forskjellig fra personer som defineres som "high" eller "low" responders på treningsintervensjonen. 
+
+Hypotese: Trening effekten påvirker total mengde RNA mer i gruppen "high responders" enn i gruppen "low responders", etter en treningsperiode.
+0 hypotese: det er ingen forskjell mellom gruppene
+For å gjøre dette ønsker vi å gjøre følgende: 
+
+Vi har her gjort følgende:
+1. Laste inn aktuelle pakker.
+2. Laste ned datasett og plukke ut aktuelle variabler i forhold til problemstillingen.
+3. T. test- er det sannsynlig at hypotesen stemmer?
+4. Gjøre om til boxplot
+5. Konklusjon
+
+### Installere pakker
+```{r warning= FALSE, message= FALSE} 
+library(readxl)
+library (tidyverse)
+
+```
+
+### Laste ned datasett fra Haun (2019)- hypertrophy.
+
+```{r}
+download.file(url = "https://ndownloader.figstatic.com/files/14702420", destfile = "hypertrophy.csv")
+```
+### Lese datasett og lage ny variabel.
+
+```{r}
+hypertrophy1 <- read_csv("hypertrophy.csv")
+```
+
+
+### På neste steg vil vi velge ut aktuelle vairabler i forhold til problemstillingen. T3T1_PERCENT_CHANGE_RNA variabelen representerer den prosentvise endringen i total RNA mengde i muskelen fra begynnelsen til slutten av treningsintervensjonen. SUB_ID representerer subjektene, Cluster variabelen differensierer mellom gruppene high og low responders. 
+
+
+```{r}
+hyp2 <- hypertrophy1 %>%
+  select(SUB_ID, CLUSTER, T1_RNA, T3_RNA) %>%
+  print()
+```
+
+
+
+### Velger ut data og fjerner NA
+Her bruker vi gjennomsnittsscore, unngår å konvertere til prosent for å sammenligne grupper. Fjerner NA fra cluster variabel.
+
+```{r}
+hyp3 <- hypertrophy1 %>%
+  select(SUB_ID, CLUSTER, T3T1__RNA) %>%
+  filter(!is.na(CLUSTER)) %>%
+  print()
+```
+### Welch Wwo sample T-test
+Her forklares variabelen T3T1_RNA gruppert for variabelen Cluster. 
+
+```{r}
+t.test(T3T1__RNA  ~ CLUSTER, data = hyp3)
+```
+
+I denne Welch two sample T-testen ser vi at gjennomsnittet i LOW gruppen er noe høyere enn i HIGH gruppen. P- verdien er relativt høy, 0,168, noe som indikerer at det er en uønsket høy sannsynlighet for at resultatene er tilfeldige (vi ser helst at P- verdi er under 0,05).
+
+### Boxplot 
+Lager diagram med variabelen T3T1_RNA gruppert for variabelen Cluster.
+
+```{r}
+hyp3 %>%
+  ggplot(aes(CLUSTER, T3T1__RNA)) + geom_boxplot()
+```
+
+
+
+
+
+### Konklusjon
+
+Den gjennomsnittlige økningen i Low gruppen er i resultatene litt høyere enn resultatene i High gruppen. Vi har en P- verdi som ligger på 0,168, noe som indikerer at det er en uønsket høy sannsynlighet for at resultatene er tilfeldige. 
+Hypotesen kan dermed ikke bekreftes av dataene.
