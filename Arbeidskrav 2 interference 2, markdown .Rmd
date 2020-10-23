@@ -37,14 +37,15 @@ library (tidyverse)
 ```{r}
 download.file(url = "https://ndownloader.figstatic.com/files/14702420", destfile = "hypertrophy.csv")
 ```
-### Lese datasett og lage ny variabel.
+#### Lese datasett og lage ny variabel.
 
 ```{r}
 hypertrophy1 <- read_csv("hypertrophy.csv")
 ```
 
 
-### På neste steg vil vi velge ut aktuelle vairabler i forhold til problemstillingen. T3T1_PERCENT_CHANGE_RNA variabelen representerer den prosentvise endringen i total RNA mengde i muskelen fra begynnelsen til slutten av treningsintervensjonen. SUB_ID representerer subjektene, Cluster variabelen differensierer mellom gruppene high og low responders. 
+#### Velge ut variabler
+På neste steg vil vi velge ut aktuelle vairabler i forhold til problemstillingen. T3T1_PERCENT_CHANGE_RNA variabelen representerer den prosentvise endringen i total RNA mengde i muskelen fra begynnelsen til slutten av treningsintervensjonen. SUB_ID representerer subjektene, Cluster variabelen differensierer mellom gruppene high og low responders. 
 
 
 ```{r}
@@ -55,7 +56,7 @@ hyp2 <- hypertrophy1 %>%
 
 
 
-### Velger ut data og fjerner NA
+#### Velger ut data og fjerner NA
 Her bruker vi gjennomsnittsscore, unngår å konvertere til prosent for å sammenligne grupper. Fjerner NA fra cluster variabel.
 
 ```{r}
@@ -64,7 +65,7 @@ hyp3 <- hypertrophy1 %>%
   filter(!is.na(CLUSTER)) %>%
   print()
 ```
-### Welch Wwo sample T-test
+#### Welch Two sample T-test
 Her forklares variabelen T3T1_RNA gruppert for variabelen Cluster. 
 
 ```{r}
@@ -73,7 +74,7 @@ t.test(T3T1__RNA  ~ CLUSTER, data = hyp3)
 
 I denne Welch two sample T-testen ser vi at gjennomsnittet i LOW gruppen er noe høyere enn i HIGH gruppen. P- verdien er relativt høy, 0,168, noe som indikerer at det er en uønsket høy sannsynlighet for at resultatene er tilfeldige (vi ser helst at P- verdi er under 0,05).
 
-### Boxplot 
+#### Boxplot 
 Lager diagram med variabelen T3T1_RNA gruppert for variabelen Cluster.
 
 ```{r}
@@ -85,7 +86,7 @@ hyp3 %>%
 
 
 
-### Konklusjon
+#### Konklusjon
 
 Den gjennomsnittlige økningen i Low gruppen er i resultatene litt høyere enn resultatene i High gruppen. Vi har en P- verdi som ligger på 0,168, noe som indikerer at det er en uønsket høy sannsynlighet for at resultatene er tilfeldige. 
 Hypotesen kan dermed ikke bekreftes av dataene.
