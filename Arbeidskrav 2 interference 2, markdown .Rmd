@@ -25,14 +25,14 @@ Vi har her gjort følgende:
 4. Gjøre om til boxplot
 5. Konklusjon
 
-### Installere pakker
+#### Installere pakker
 ```{r warning= FALSE, message= FALSE} 
 library(readxl)
 library (tidyverse)
 
 ```
 
-### Laste ned datasett fra Haun (2019)- hypertrophy.
+#### Laste ned datasett fra Haun (2019)- hypertrophy.
 
 ```{r}
 download.file(url = "https://ndownloader.figstatic.com/files/14702420", destfile = "hypertrophy.csv")
