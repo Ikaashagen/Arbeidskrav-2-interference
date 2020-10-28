@@ -3,15 +3,20 @@ title: "Arbeidskrav 2, inference"
 author: "Magnus Kleiven"
 date: "20 10 2020"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
-Innledning og hypotese:
-I denne oppgaven skal vi se på hvorvidt en treningsintervensjon påvirker totalt RNA innhold i muskelen, og om denne påvirkningen er forskjellig fra personer som defineres som "high" eller "low" responders på treningsintervensjonen. 
+# Innledning og hypotese:
+I denne oppgaven skal vi se på hvorvidt en treningsintervensjon påvirker totalt RNA innhold i muskelen, og om denne påvirkningen er forskjellig fra personer som defineres som "high" eller "low" responders på treningsintervensjonen.
+<!-- In a final report (mappeeksamen), maybe add some information on why you expect this result -->
 
-Hypotese: Trening effekten påvirker total mengde RNA mer i gruppen "high responders" enn i gruppen "low responders", etter en treningsperiode.
-0 hypotese: det er ingen forskjell mellom gruppene
-For å gjøre dette ønsker vi å gjøre følgende: 
+H<sub>A</sub>: Trening effekten påvirker total mengde RNA mer i gruppen "high responders" enn i gruppen "low responders", etter en treningsperiode.
 
+H<sub>0</sub>: det er ingen forskjell mellom gruppene
+
+# Metode
+<!-- Maybe write this in a more method-like way instead of a list in final report? -->
 Vi har her gjort følgende:
 1. Laste inn aktuelle pakker.
 2. Laste ned datasett.
@@ -22,9 +27,9 @@ Vi har her gjort følgende:
 5. Konklusjon
 
 
-Steg 1 - Laste ned pakke
+Steg 1 - Laste ned pakke <!-- Nice with step by step, but the report will look nicer with the code as echo = FALSE -->
 ```{r warning= FALSE, message= FALSE} 
-library (tidyverse)
+library(tidyverse)
 ```
 
 
@@ -60,13 +65,16 @@ hyp3 <- hypertrophy1 %>%
 ```
  
 
-
+<!-- The t-test can be save and retrieved in text by using `r ` blocks in the text see example below -->
 Steg 5 - T-test
 ```{r}
-t.test(T3T1__RNA  ~ CLUSTER, data = hyp3) # Her forklares variabelen T3T1_RNA gruppert for variabelen Cluster.
+tt <- t.test(T3T1__RNA  ~ CLUSTER, data = hyp3) # Her forklares variabelen T3T1_RNA gruppert for variabelen Cluster.
+
+
+
 ```
 
-I denne Welch two sample T-testen ser vi at gjennomsnittet i LOW gruppen er noe høyere enn i HIGH gruppen. P- verdien er relativt høy, 0,168, noe som indikerer at det er en uønsket høy sannsynlighet for at resultatene er tilfeldige (vi ser helst at P- verdi er under 0,05).
+<!-- I denne Welch two sample t-testen ser vi at g-->Gjennomsnittet i LOW gruppen er noe høyere enn i HIGH gruppen men resultatet er ikke signifikant (p = `r round(tt$p.value, 3)`. <!-- P- verdien er relativt høy, 0,168, noe som indikerer at det er en uønsket høy sannsynlighet for at resultatene er tilfeldige (vi ser helst at P- verdi er under 0,05).-->
 
 
 Steg 6 - Lage boxplott med variabelen T3T1_RNA grupper for variabelen CLUSTER
@@ -77,6 +85,6 @@ hyp3 %>%
 
 
 Konklusjon:
-
+<!-- Do not repeat results here, re-formulate based on your hypothesis -->
 Den gjennomsnittlige økningen i Low gruppen er i resultatene litt høyere enn resultatene i High gruppen. Vi har en P- verdi som ligger på 0,168, noe som indikerer at det er en uønsket høy sannsynlighet for at resultatene er tilfeldige. 
 Hypotesen kan dermed ikke bekreftes av dataene.
